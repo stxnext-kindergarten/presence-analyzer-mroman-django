@@ -37,3 +37,4 @@ nosetests.xml
 
 .idea
 output.xml
+db.sqlite3
