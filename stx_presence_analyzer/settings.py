@@ -36,6 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'stx_presence_analyzer.analyzer'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -45,7 +46,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'stx_presence_analyzer.analyzer'
 )
 
 ROOT_URLCONF = 'stx_presence_analyzer.urls'
