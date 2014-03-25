@@ -1,0 +1,3 @@
+#!/bin/sh
+
+find ${buildout:directory}/stxrms -name "*.pyc" -exec rm -rf {} \;
