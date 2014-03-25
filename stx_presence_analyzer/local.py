@@ -1,3 +1,7 @@
+"""
+Dev settings for django project.
+"""
+
 from stx_presence_analyzer.settings import *
 
 DEBUG = True
