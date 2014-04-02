@@ -2,7 +2,7 @@
     $(document).ready(function(){
         var loading = $('#loading');
         var users = [];
-        $.getJSON("/api/v3/users/", function(result) {
+        $.getJSON("/api/v4/users/", function(result) {
             var dropdown = $("#user_id");
             $.each(result, function(item) {
                 dropdown.append($("<option />").val(item).text(this.name).attr('data-avatar', this.avatar));

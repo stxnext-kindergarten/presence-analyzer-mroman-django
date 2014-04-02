@@ -4,7 +4,7 @@ google.load("visualization", "1", {packages:["corechart", "timeline"], 'language
     $(document).ready(function(){
         var loading = $('#loading');
         var users = [];
-        $.getJSON("/api/v3/users/", function(result) {
+        $.getJSON("/api/v4/users/", function(result) {
             var dropdown = $("#user_id");
             $.each(result, function(item) {
                 dropdown.append($("<option />").val(item).text(this.name).attr('data-avatar', 'avatarurl'));
@@ -23,7 +23,7 @@ google.load("visualization", "1", {packages:["corechart", "timeline"], 'language
                 $('#avatar').children('img').attr('src', newImage);
                 loading.show();
                 chart_div.hide();
-                $.getJSON("/api/v2/"+user, function(result) {
+                $.getJSON("/api/v3/"+user, function(result) {
                     if(result.length !== 0) {
                         $.each(result, function() {
                             this[1] = new Date(this[1] * 1000);

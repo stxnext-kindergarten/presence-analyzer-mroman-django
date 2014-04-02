@@ -12,7 +12,6 @@ class MainPage(TemplateView):
     Renders main page
     """
     def get_template_names(self):
-        # import pdb; pdb.set_trace()
         if 'template_name' in self.kwargs:
             template_name = self.kwargs['template_name']
         else:
@@ -32,6 +31,7 @@ class JSONResponseMixin(object):
     def render_to_response(self, context):
         "Returns a JSON response containing 'context' as payload"
         return self.get_json_response(self.convert_context_to_json(context))
+
 
     def get_json_response(self, content, **httpresponse_kwargs):
         "Construct an `HttpResponse` object."
@@ -72,6 +72,33 @@ class Presence(JSONResponseMixin, TemplateView):
             }
         user_id = int(kwargs['user_id'])
         return presences[user_id]
+
+
+class PresenceStartEnd(JSONResponseMixin, TemplateView):
+    def get_context_data(self, **kwargs):
+        presences = {
+            141: [
+                    ("Mon", 30441.615384615383, 59949.692307692305), 
+                    ("Tue", 28239.30769230769, 56769.38461538462), 
+                    ("Wed", 29774.75, 59477.5), 
+                    ("Thu", 28521.083333333332, 58242.916666666664), 
+                    ("Fri", 28690.727272727272, 57760.0), 
+                    ("Sat", 28251.0, 73288.0), 
+                    ("Sun", 0, 0)
+                ],
+            176: [
+                    ("Mon", 0, 0), 
+                    ("Tue", 32632.0, 50797.5), 
+                    ("Wed", 29643.0, 60218.0), 
+                    ("Thu", 32009.0, 46916.5), 
+                    ("Fri", 32319.0, 32320.0), 
+                    ("Sat", 0, 0), 
+                    ("Sun", 0, 0)
+                ],
+            }
+        user_id = int(kwargs['user_id'])
+        return presences[user_id]
+
 
 class Users(JSONResponseMixin, TemplateView):
     def get_context_data(self, **kwargs):
