@@ -1,52 +1,47 @@
-from django.shortcuts import render
-from django.views.generic.base import TemplateView
-# from django.views.generic.base import BaseDetailView
-from django.utils import simplejson as json
-from django.http import HttpResponse
-from datetime import datetime
 import time
 
+from datetime import datetime
 
-# Create your views here.
+from django.utils import simplejson as json
+from django.shortcuts import render
+from django.http import HttpResponse
+from django.http import Http404
+from django.views.generic.base import TemplateView
+
+
 class MainPage(TemplateView):
     """
     Renders main page
     """
     def get_template_names(self):
-        "Gives templates for urls"
-        if 'template_name' in self.kwargs:
-            template_name = self.kwargs['template_name']
-        else:
-            template_name = 'home'
-
+        """Gets templates names"""
+        if self.kwargs == {}:
+            self.kwargs = {'template_name': u'presenceweekday'}
+        template_name = self.kwargs['template_name']
         available_templates = {
             'home': 'presence_weekday.html',
             'presenceweekday': 'presence_weekday.html',
-            'meantimeweekday': 'mean_time_weekday.html',
-            'presencestartend': 'presence_start_end.html'
+            'meantimeweekday': 'presence_weekday.html',
+            'presencestartend': 'presence_weekday.html'
         }
 
-        return available_templates[template_name]
+        return available_templates.get(template_name, 'presence_weekday.html')
 
 
 class JSONResponseMixin(object):
     def render_to_response(self, context):
-        "Returns a JSON response containing 'context' as payload"
+        """Returns a JSON response containing 'context' as payload"""
         return self.get_json_response(self.convert_context_to_json(context))
 
     def get_json_response(self, content, **httpresponse_kwargs):
-        "Construct an `HttpResponse` object."
+        """Construct an `HttpResponse` object."""
         return HttpResponse(
             content,
             content_type='application/json',
             **httpresponse_kwargs)
 
     def convert_context_to_json(self, context):
-        "Convert the context dictionary into a JSON object"
-        # Note: This is *EXTREMELY* naive; in reality, you'll need
-        # to do much more complex handling to ensure that arbitrary
-        # objects -- such as Django model instances or querysets
-        # -- can be serialized as JSON.
+        """Convert the context dictionary into a JSON object"""
         return json.dumps(context)
 
 
@@ -55,7 +50,7 @@ class Presence(JSONResponseMixin, TemplateView):
     Class for importing/with data for presence weekday & meantimeweekday
     """
     def get_context_data(self, **kwargs):
-        "Get context data method"
+        """Get context data method"""
         presences = {
             141: [
                 ('Weekday', 'Presence (s)'),
@@ -87,7 +82,7 @@ class PresenceStartEnd(JSONResponseMixin, TemplateView):
     Class for importing/with data for presencestartend
     """
     def get_context_data(self, **kwargs):
-        "Get context data method"
+        """Get context data method"""
         presences = {
             141: [
                 ("Mon", 30441.615384615383, 59949.692307692305),
@@ -117,7 +112,7 @@ class Users(JSONResponseMixin, TemplateView):
     Class for importing/with users names and avatars
     """
     def get_context_data(self, **kwargs):
-        "Get context data method"
+        """Get context data method"""
         return [
             {'avatar': 'https://intranet.stxnext.pl/api/images/users/141',
                 'name': 'Adam P.',

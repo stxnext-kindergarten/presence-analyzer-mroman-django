@@ -41,6 +41,8 @@ INSTALLED_APPS = (
     'stx_presence_analyzer.analyzer',
 )
 
+TEMPLATE_CONTEXT_PROCESSORS = ('django.core.context_processors.static',)
+
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

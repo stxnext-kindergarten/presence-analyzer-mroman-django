@@ -11,7 +11,7 @@ class User(models.Model):
 
 class PresenceWeekday(models.Model):
     user = models.ForeignKey(
-        'analyzer.User', verbose_name='Uzytkownik')
+        'analyzer.User', verbose_name='User')
     day = models.DateField('Data')
     start = models.TimeField('Start')
     end = models.TimeField('End')

@@ -1,7 +1,21 @@
 {% extends "base.html" %}
 {% block script %}
-    <script src="/static/js/json_presence_weekday.js"></script>
+    {% if template_name == "presenceweekday" or template_name == None %}
+		<script src="/static/js/json_presence_weekday.js"></script>
+    {% elif template_name == "meantimeweekday" %}
+		<script src="/static/js/json_mean_time_weekday.js"></script>
+    {% elif template_name == "presencestartend" %}
+		<script src="/static/js/json_presence_start_end.js"></script>
+    {% else %}
+		<script src="/static/js/json_presence_weekday.js" ></script>
+    {% endif %}
 {% endblock %}
 {% block content %}    
-    <h2>Presence by weekday</h2>
+    {% if template_name == "presenceweekday" or template_name == None %}
+		<h2>Presence by weekday</h2>
+    {% elif template_name == "meantimeweekday" %}
+		<h2>Presence mean time by weekday</h2>
+    {% elif template_name == "presencestartend" %}
+		<h2>Presence start-end weekday</h2>
+    {% endif %}
 {% endblock %}

@@ -7,10 +7,10 @@
     <meta name="keywords" content="" />
     <meta name="description" content=""/>
     <meta name="author" content="STX Next sp. z o.o."/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
-    <link href="/static/css/normalize.css" media="all" rel="stylesheet" type="text/css" /> 
-    <link href="/static/css/body_style.css" media="all" rel="stylesheet" type="text/css" /> 
-    <script src="/static/js/jquery.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{{ STATIC_URL }}css/normalize.css" media="all" rel="stylesheet" type="text/css" />
+    <link href="{{ STATIC_URL }}css/body_style.css" media="all" rel="stylesheet" type="text/css" />
+    <script src="{{ STATIC_URL }}js/jquery.min.js"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript">
         google.load("visualization", "1", {packages:["corechart"], 'language': 'en'});
@@ -20,7 +20,7 @@
 <body>
     <div id="main">
         <div id="header">
-            <h1>Presence analyzer</h1>              
+            <h1>Presence analyzer</h1>
             <ul>
                 <li{% if template_name == "presenceweekday" or template_name == None %} id="selected"{% endif %}><a href="/presenceweekday/">Presence by weekday</a></li>
                 <li{% if template_name == "meantimeweekday" %} id="selected"{% endif %}><a href="/meantimeweekday/">Presence mean time</a></li>
