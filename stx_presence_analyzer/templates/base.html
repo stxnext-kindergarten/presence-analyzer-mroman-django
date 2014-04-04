@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang=en>
+<head>
+    <meta charset=utf-8>
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE9">
+    <title>Presence analyzer</title>
+    <meta name="keywords" content="" />
+    <meta name="description" content=""/>
+    <meta name="author" content="STX Next sp. z o.o."/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{{ STATIC_URL }}css/normalize.css" media="all" rel="stylesheet" type="text/css" />
+    <link href="{{ STATIC_URL }}css/body_style.css" media="all" rel="stylesheet" type="text/css" />
+    <script src="{{ STATIC_URL }}js/jquery.min.js"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+        google.load("visualization", "1", {packages:["corechart"], 'language': 'en'});
+    </script>
+    {% block script %}{% endblock %}
+</head>
+<body>
+    <div id="main">
+        <div id="header">
+            <h1>Presence analyzer</h1>
+            <ul>
+                <li{% if extra_data.title == "Presence by weekday"%} id="selected"{% endif %}><a href="/presenceweekday/">Presence by weekday</a></li>
+                <li{% if extra_data.title == "Presence mean time" %} id="selected"{% endif %}><a href="/meantimeweekday/">Presence mean time</a></li>
+                <li{% if extra_data.title == "Presence start-end" %} id="selected"{% endif %}><a href="/presencestartend">Presence start-end</a></li>
+            </ul>
+        </div>
+        <div id="content">
+            {% include 'content.html' %}
+        </div>
+    </div>
+</body>
+</html>
