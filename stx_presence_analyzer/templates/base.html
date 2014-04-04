@@ -22,9 +22,9 @@
         <div id="header">
             <h1>Presence analyzer</h1>
             <ul>
-                <li{% if template_name == "presenceweekday" or template_name == None %} id="selected"{% endif %}><a href="/presenceweekday/">Presence by weekday</a></li>
-                <li{% if template_name == "meantimeweekday" %} id="selected"{% endif %}><a href="/meantimeweekday/">Presence mean time</a></li>
-                <li{% if template_name == "presencestartend" %} id="selected"{% endif %}><a href="/presencestartend">Presence start-end</a></li>
+                <li{% if extra_data.title == "Presence by weekday"%} id="selected"{% endif %}><a href="/presenceweekday/">Presence by weekday</a></li>
+                <li{% if extra_data.title == "Presence mean time" %} id="selected"{% endif %}><a href="/meantimeweekday/">Presence mean time</a></li>
+                <li{% if extra_data.title == "Presence start-end" %} id="selected"{% endif %}><a href="/presencestartend">Presence start-end</a></li>
             </ul>
         </div>
         <div id="content">

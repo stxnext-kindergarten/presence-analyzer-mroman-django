@@ -4,8 +4,7 @@ from datetime import datetime
 
 from django.utils import simplejson as json
 from django.shortcuts import render
-from django.http import HttpResponse
-from django.http import Http404
+from django.http import HttpResponse, Http404
 from django.views.generic.base import TemplateView
 
 
@@ -13,19 +12,25 @@ class MainPage(TemplateView):
     """
     Renders main page
     """
-    def get_template_names(self):
-        """Gets templates names"""
-        if self.kwargs == {}:
-            self.kwargs = {'template_name': u'presenceweekday'}
-        template_name = self.kwargs['template_name']
-        available_templates = {
-            'home': 'presence_weekday.html',
-            'presenceweekday': 'presence_weekday.html',
-            'meantimeweekday': 'presence_weekday.html',
-            'presencestartend': 'presence_weekday.html'
-        }
-
-        return available_templates.get(template_name, 'presence_weekday.html')
+    template_name = 'presence_weekday.html'
+    def get_context_data(self, template_name=None):
+        ctx = super(MainPage, self).get_context_data()
+        if template_name == 'meantimeweekday':
+        	ctx['extra_data'] = {	
+        		'js': 'json_mean_time_weekday.js',
+        		'title': 'Presence mean time',
+        	}
+        elif template_name == 'presencestartend':
+        	ctx['extra_data'] = {	
+        		'js': 'json_presence_start_end.js',
+        		'title': 'Presence start-end',
+        	}
+        else:
+        	ctx['extra_data'] = {	
+        		'js': 'json_presence_weekday.js',
+        		'title': 'Presence by weekday',
+        	}
+        return ctx
 
 
 class JSONResponseMixin(object):
