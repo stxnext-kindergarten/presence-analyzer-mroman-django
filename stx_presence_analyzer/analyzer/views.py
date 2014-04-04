@@ -13,23 +13,24 @@ class MainPage(TemplateView):
     Renders main page
     """
     template_name = 'presence_weekday.html'
+
     def get_context_data(self, template_name=None):
         ctx = super(MainPage, self).get_context_data()
         if template_name == 'meantimeweekday':
-        	ctx['extra_data'] = {	
-        		'js': 'json_mean_time_weekday.js',
-        		'title': 'Presence mean time',
-        	}
+            ctx['extra_data'] = {
+                'js': 'json_mean_time_weekday.js',
+                'title': 'Presence mean time',
+            }
         elif template_name == 'presencestartend':
-        	ctx['extra_data'] = {	
-        		'js': 'json_presence_start_end.js',
-        		'title': 'Presence start-end',
-        	}
+            ctx['extra_data'] = {
+                'js': 'json_presence_start_end.js',
+                'title': 'Presence start-end',
+            }
         else:
-        	ctx['extra_data'] = {	
-        		'js': 'json_presence_weekday.js',
-        		'title': 'Presence by weekday',
-        	}
+            ctx['extra_data'] = {
+                'js': 'json_presence_weekday.js',
+                'title': 'Presence by weekday',
+                }
         return ctx
 
 
