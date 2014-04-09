@@ -24,7 +24,7 @@ google.load("visualization", "1", {packages:["corechart", "timeline"], 'language
                 loading.show();
                 chart_div.hide();
                 $.getJSON("/api/v3/"+user, function(result) {
-                    if(result.length !== 0) {
+                    if(result.length !== undefined) {
                         $.each(result, function() {
                             this[1] = new Date(this[1] * 1000);
                             this[2] = new Date(this[2] * 1000);

@@ -9,6 +9,7 @@ import xml.etree.ElementTree as ET
 
 from optparse import make_option
 from django.core.management.base import BaseCommand, CommandError
+
 from stx_presence_analyzer.analyzer.models import User, PresenceWeekday
 
 
@@ -99,9 +100,10 @@ class Command(BaseCommand):
             print "Users done!"
 
             get_data2 = self._get_data()
+            users_id_dict = dict(User.objects.filter(legacy_id__in=get_data2.keys()).values_list('legacy_id', 'id'))
             for legacy_id, data in get_data2.iteritems():
                 try:
-                    user = User.objects.get(legacy_id=legacy_id)
+                    user = users_id_dict[legacy_id]
                 except:
                     print 'User for legacy_id=%d not found' % legacy_id
                 else:
@@ -115,5 +117,5 @@ class Command(BaseCommand):
                             start=start,
                             end=end)
 
-                    print "User %s done" % str(user)
+                    print "User %s done" % user
             print "Data done!"

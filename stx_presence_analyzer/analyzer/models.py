@@ -1,6 +1,4 @@
 from django.db import models
-# from django.db import connections
-# Create your models here.
 
 
 class User(models.Model):
@@ -11,7 +9,7 @@ class User(models.Model):
 
 class PresenceWeekday(models.Model):
     user = models.ForeignKey(
-        'analyzer.User', verbose_name='id')
+        'analyzer.User', verbose_name='User')
     day = models.DateField('Data')
     start = models.TimeField('Start')
     end = models.TimeField('End')

@@ -3,7 +3,6 @@ import time
 import calendar
 import logging
 
-
 from datetime import datetime
 
 from django.utils import simplejson as json
@@ -11,6 +10,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, Http404
 from django.views.generic.base import TemplateView
 from django.views.generic import ListView
+
 from stx_presence_analyzer.analyzer.models import User, PresenceWeekday
 from stx_presence_analyzer.analyzer import utils
 
@@ -59,14 +59,14 @@ class JSONResponseMixin(object):
         """Convert the context dictionary into a JSON object"""
         return json.dumps(context)
 
-    def _get_data(self, user_id):
+    def _get_data(self):
         """ Get data from model PresenceWeekday and return it"""
         user_id_ok = self.kwargs['user_id']
         data = PresenceWeekday.objects.filter(user__legacy_id=user_id_ok)
         if data == [] or not data:
             logger.debug('User %s not found!', user_id_ok)
             return []
-        data_dict = {}
+
         data_presence_dict = {}
 
         for presence in data:
@@ -74,9 +74,7 @@ class JSONResponseMixin(object):
                 'start': presence.start,
                 'end': presence.end
             }
-
-        data_dict[user_id_ok] = data_presence_dict
-        return data_dict
+        return data_presence_dict
 
 
 class Presence(JSONResponseMixin, TemplateView):
@@ -85,10 +83,10 @@ class Presence(JSONResponseMixin, TemplateView):
     """
     def get_context_data(self, **kwargs):
         """Get context data method"""
-        data_dict = super(Presence, self)._get_data(int(kwargs['user_id']))
+        data_dict = self._get_data()
         if data_dict == []:
-            return []
-        weekdays = utils.group_by_weekday(data_dict[kwargs['user_id']])
+            return {}
+        weekdays = utils.group_by_weekday(data_dict)
 
         presences = [
             (
@@ -106,10 +104,10 @@ class PresenceStartEnd(JSONResponseMixin, TemplateView):
     """
     def get_context_data(self, **kwargs):
         """Get context data method"""
-        data_dict = super(PresenceStartEnd, self)._get_data(int(kwargs['user_id']))
+        data_dict = self._get_data()
         if data_dict == []:
-            return []
-        weekdays = utils.group_times_by_weekday(data_dict[kwargs['user_id']])
+            return {}
+        weekdays = utils.group_times_by_weekday(data_dict)
         presencesstartend = [
             (
                 calendar.day_abbr[weekday],
@@ -128,13 +126,12 @@ class Users(JSONResponseMixin, TemplateView):
     def get_context_data(self, **kwargs):
         """Get context data method"""
         users = User.objects.all()
-        user_list = []
-        for user in users:
-            user_list.append(
-                {
-                    'avatar': user.avatar,
-                    'name': user.first_name,
-                    'user_id': user.legacy_id
-                },
-            )
+        user_list = [
+            {
+                'avatar': user.avatar,
+                'name': user.first_name,
+                'user_id': user.legacy_id
+            }
+            for user in users
+        ]
         return user_list
