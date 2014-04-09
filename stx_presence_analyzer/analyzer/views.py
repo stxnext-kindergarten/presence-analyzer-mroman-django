@@ -16,6 +16,7 @@ from stx_presence_analyzer.analyzer import utils
 
 logger = logging.getLogger(__name__)
 
+
 class MainPage(TemplateView):
     """
     Renders main page
@@ -47,7 +48,6 @@ class JSONResponseMixin(object):
         """Returns a JSON response containing 'context' as payload"""
         return self.get_json_response(self.convert_context_to_json(context))
 
-
     def get_json_response(self, content, **httpresponse_kwargs):
         """Construct an `HttpResponse` object."""
         return HttpResponse(
@@ -55,14 +55,14 @@ class JSONResponseMixin(object):
             content_type='application/json',
             **httpresponse_kwargs)
 
-
     def convert_context_to_json(self, context):
         """Convert the context dictionary into a JSON object"""
         return json.dumps(context)
 
     def _get_data(self, user_id):
+        """ Get data from model PresenceWeekday and return it"""
         user_id_ok = self.kwargs['user_id']
-        data = PresenceWeekday.objects.filter(user__legacy_id = user_id_ok)
+        data = PresenceWeekday.objects.filter(user__legacy_id=user_id_ok)
         if not data:
             logger.debug('User %s not found!', user_id_ok)
             return []
@@ -88,7 +88,7 @@ class Presence(JSONResponseMixin, TemplateView):
         data_dict = super(Presence, self)._get_data(int(kwargs['user_id']))
         weekdays = utils.group_by_weekday(data_dict[kwargs['user_id']])
 
-        presences =  [
+        presences = [
             (
                 calendar.day_abbr[weekday], sum(intervals)
             )
@@ -107,13 +107,13 @@ class PresenceStartEnd(JSONResponseMixin, TemplateView):
         data_dict = super(PresenceStartEnd, self)._get_data(int(kwargs['user_id']))
         weekdays = utils.group_times_by_weekday(data_dict[kwargs['user_id']])
         presencesstartend = [
-                (
-                    calendar.day_abbr[weekday],
-                    utils.mean(times['start']),
-                    utils.mean(times['end']),
-                )
-                for weekday, times in weekdays.items()
-            ]
+            (
+                calendar.day_abbr[weekday],
+                utils.mean(times['start']),
+                utils.mean(times['end']),
+            )
+            for weekday, times in weekdays.items()
+        ]
         return presencesstartend
 
 
@@ -121,7 +121,6 @@ class Users(JSONResponseMixin, TemplateView):
     """
     Class for importing/with users names and avatars
     """
-
     def get_context_data(self, **kwargs):
         """Get context data method"""
         users = User.objects.all()
@@ -129,10 +128,9 @@ class Users(JSONResponseMixin, TemplateView):
         for user in users:
             user_list.append(
                 {
-                'avatar': user.avatar,
-                'name': user.first_name,
-                'user_id': user.legacy_id
+                    'avatar': user.avatar,
+                    'name': user.first_name,
+                    'user_id': user.legacy_id
                 },
             )
-
         return user_list

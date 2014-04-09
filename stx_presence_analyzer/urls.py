@@ -1,3 +1,6 @@
+# Uncomment the next two lines to enable the admin:
+# from django.contrib import admin
+# admin.autodiscover()
 from django.conf.urls import patterns, url
 from django.contrib import admin
 
@@ -6,9 +9,6 @@ from analyzer.views import MainPage, Presence, PresenceStartEnd, Users
 
 admin.autodiscover()
 
-# Uncomment the next two lines to enable the admin:
-# from django.contrib import admin
-# admin.autodiscover()
 
 urlpatterns = patterns(
     '',

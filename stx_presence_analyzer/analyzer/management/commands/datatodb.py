@@ -1,6 +1,10 @@
- # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
-import csv, io, sqlite3, sys, datetime
+import csv
+import io
+import sqlite3
+import sys
+import datetime
 import xml.etree.ElementTree as ET
 
 from optparse import make_option
@@ -11,8 +15,8 @@ from stx_presence_analyzer.analyzer.models import User, PresenceWeekday
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
         make_option('--users_to_db',
-            action='store_true',
-            help='File users and data to db'),)
+                    action='store_true',
+                    help='File users and data to db'),)
 
     def _get_data(self):
         """
@@ -60,7 +64,6 @@ class Command(BaseCommand):
                 data.setdefault(user_id, {})[date] = {'start': start, 'end': end}
         return data
 
-
     def _get_data_from_xml(self):
         """
         Parser get data from users.xml file
@@ -83,7 +86,6 @@ class Command(BaseCommand):
                     'name': user.find('./name').text,
                     'avatar': url+user.find('./avatar').text}
                 for user in tree.findall('./users/user')}
-
 
     def handle(self, *args, **options):
         if options['users_to_db']:
