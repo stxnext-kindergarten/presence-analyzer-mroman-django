@@ -63,7 +63,7 @@ class JSONResponseMixin(object):
         """ Get data from model PresenceWeekday and return it"""
         user_id_ok = self.kwargs['user_id']
         data = PresenceWeekday.objects.filter(user__legacy_id=user_id_ok)
-        if not data:
+        if data == [] or not data:
             logger.debug('User %s not found!', user_id_ok)
             return []
         data_dict = {}
@@ -86,6 +86,8 @@ class Presence(JSONResponseMixin, TemplateView):
     def get_context_data(self, **kwargs):
         """Get context data method"""
         data_dict = super(Presence, self)._get_data(int(kwargs['user_id']))
+        if data_dict == []:
+            return []
         weekdays = utils.group_by_weekday(data_dict[kwargs['user_id']])
 
         presences = [
@@ -105,6 +107,8 @@ class PresenceStartEnd(JSONResponseMixin, TemplateView):
     def get_context_data(self, **kwargs):
         """Get context data method"""
         data_dict = super(PresenceStartEnd, self)._get_data(int(kwargs['user_id']))
+        if data_dict == []:
+            return []
         weekdays = utils.group_times_by_weekday(data_dict[kwargs['user_id']])
         presencesstartend = [
             (
