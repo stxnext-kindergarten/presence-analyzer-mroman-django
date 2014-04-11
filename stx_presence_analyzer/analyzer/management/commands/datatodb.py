@@ -2,13 +2,11 @@
 
 import csv
 import io
-import sqlite3
-import sys
 import datetime
 import xml.etree.ElementTree as ET
 
 from optparse import make_option
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
 from stx_presence_analyzer.analyzer.models import User, PresenceWeekday
 
@@ -91,31 +89,31 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         if options['users_to_db']:
             get_data1 = self._get_data_from_xml()
-            for usr, data in get_data1.iteritems():
-                created, PWN = User.objects.get_or_create(
+            for user_id, data in get_data1.iteritems():
+                User.objects.get_or_create(
                     first_name=data['name'],
                     avatar=data['avatar'],
-                    legacy_id=usr
+                    legacy_id=user_id
                     )
-            print "Users done!"
+            print "Users list done!"
 
             get_data2 = self._get_data()
-            users_id_dict = dict(User.objects.filter(legacy_id__in=get_data2.keys()).values_list('legacy_id', 'id'))
+            mapped_ids = dict(
+                User.objects.filter(
+                    legacy_id__in=get_data2.keys()).values_list('legacy_id', 'id'))
             for legacy_id, data in get_data2.iteritems():
-                try:
-                    user = users_id_dict[legacy_id]
-                except:
-                    print 'User for legacy_id=%d not found' % legacy_id
-                else:
+                user_id = mapped_ids.get(legacy_id)
+                if user_id:
                     for day, hours in data.iteritems():
                         start = hours['start']
                         end = hours['end']
-
-                        created, PWD = PresenceWeekday.objects.get_or_create(
-                            user=user,
+                        PresenceWeekday.objects.get_or_create(
+                            user_id=user_id,
                             day=day,
                             start=start,
-                            end=end)
-
-                    print "User %s done" % user
+                            end=end
+                            )
+                    print "User %s done" % legacy_id
+                else:
+                    print "User %s has not been done. No data for user" % legacy_id
             print "Data done!"

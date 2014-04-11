@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import time
-import calendar
-
-from datetime import datetime
-
-
 def group_by_weekday(items):
     """
     Groups presence entries by weekday.

@@ -1,15 +1,10 @@
 # -*- coding: utf-8 -*-
-import time
 import calendar
 import logging
 
-from datetime import datetime
-
 from django.utils import simplejson as json
-from django.shortcuts import render
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse
 from django.views.generic.base import TemplateView
-from django.views.generic import ListView
 
 from stx_presence_analyzer.analyzer.models import User, PresenceWeekday
 from stx_presence_analyzer.analyzer import utils
@@ -108,7 +103,7 @@ class PresenceStartEnd(JSONResponseMixin, TemplateView):
         if data_dict == []:
             return {}
         weekdays = utils.group_times_by_weekday(data_dict)
-        presencesstartend = [
+        return [
             (
                 calendar.day_abbr[weekday],
                 utils.mean(times['start']),
@@ -116,7 +111,6 @@ class PresenceStartEnd(JSONResponseMixin, TemplateView):
             )
             for weekday, times in weekdays.items()
         ]
-        return presencesstartend
 
 
 class Users(JSONResponseMixin, TemplateView):
@@ -125,8 +119,9 @@ class Users(JSONResponseMixin, TemplateView):
     """
     def get_context_data(self, **kwargs):
         """Get context data method"""
+        # import pdb; pdb.set_trace()
         users = User.objects.all()
-        user_list = [
+        return [
             {
                 'avatar': user.avatar,
                 'name': user.first_name,
@@ -134,4 +129,3 @@ class Users(JSONResponseMixin, TemplateView):
             }
             for user in users
         ]
-        return user_list
