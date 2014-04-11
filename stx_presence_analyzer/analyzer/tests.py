@@ -36,18 +36,18 @@ class PresenceViewsTestCase(TestCase):
         Test users listing.
         """
         resp = self.client.get('/api/v4/users/')
-        check1 = User.objects.get(pk=2)
+        json_resp = json.loads(resp.content)
+        user_151 = json_resp[0]['user_id']
 
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp['Content-Type'], 'application/json')
-        self.assertEqual(check1.legacy_id, 150)
+        self.assertEqual(user_151, 151)
 
     def test_presence_data_request(self):
         """
         Test presence by weekday and mean time view
         """
         resp = self.client.get('/api/v2/11')
-        check1 = PresenceWeekday.objects.get(pk=3)
         data = json.loads(resp.content)
 
         expected_result = [
@@ -63,7 +63,6 @@ class PresenceViewsTestCase(TestCase):
 
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp['Content-Type'], 'application/json')
-        self.assertEqual(check1.day, datetime.date(2012, 11, 23))
         self.assertEqual(data, expected_result)
 
     def test_presencestartend_data_request(self):

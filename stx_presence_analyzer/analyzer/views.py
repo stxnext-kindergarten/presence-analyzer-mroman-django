@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import calendar
 import logging
+import json
 
-from django.utils import simplejson as json
 from django.http import HttpResponse
 from django.views.generic.base import TemplateView
 
@@ -58,17 +58,17 @@ class JSONResponseMixin(object):
         """ Get data from model PresenceWeekday and return it"""
         user_id_ok = self.kwargs['user_id']
         data = PresenceWeekday.objects.filter(user__legacy_id=user_id_ok)
-        if data == [] or not data:
+        if not data:
             logger.debug('User %s not found!', user_id_ok)
             return []
 
-        data_presence_dict = {}
+        data_presence_dict = {
+            presence.day:
+                {
+                    'start': presence.start,
+                    'end': presence.end
+                } for presence in data}
 
-        for presence in data:
-            data_presence_dict[presence.day] = {
-                'start': presence.start,
-                'end': presence.end
-            }
         return data_presence_dict
 
 
@@ -79,7 +79,7 @@ class Presence(JSONResponseMixin, TemplateView):
     def get_context_data(self, **kwargs):
         """Get context data method"""
         data_dict = self._get_data()
-        if data_dict == []:
+        if not data_dict:
             return {}
         weekdays = utils.group_by_weekday(data_dict)
 
@@ -100,7 +100,7 @@ class PresenceStartEnd(JSONResponseMixin, TemplateView):
     def get_context_data(self, **kwargs):
         """Get context data method"""
         data_dict = self._get_data()
-        if data_dict == []:
+        if not data_dict:
             return {}
         weekdays = utils.group_times_by_weekday(data_dict)
         return [
@@ -119,7 +119,6 @@ class Users(JSONResponseMixin, TemplateView):
     """
     def get_context_data(self, **kwargs):
         """Get context data method"""
-        # import pdb; pdb.set_trace()
         users = User.objects.all()
         return [
             {

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+""" Download data from files and export it to DB """
 import csv
 import io
 import datetime
@@ -96,8 +96,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if options['users_to_db']:
-            get_data1 = self._get_data_from_xml()
-            for user_id, data in get_data1.iteritems():
+            get_data_users = self._get_data_from_xml()
+            for user_id, data in get_data_users.iteritems():
                 User.objects.get_or_create(
                     first_name=data['name'],
                     avatar=data['avatar'],
@@ -105,12 +105,12 @@ class Command(BaseCommand):
                     )
             print "Users list done!"
 
-            get_data2 = self._get_data()
+            get_data_presence = self._get_data()
             mapped_ids = dict(
                 User.objects.filter(
-                    legacy_id__in=get_data2.keys()).values_list('legacy_id',
-                                                                'id'))
-            for legacy_id, data in get_data2.iteritems():
+                    legacy_id__in=get_data_presence.keys()).values_list(
+                        'legacy_id', 'id'))
+            for legacy_id, data in get_data_presence.iteritems():
                 user_id = mapped_ids.get(legacy_id)
                 if user_id:
                     for day, hours in data.iteritems():
