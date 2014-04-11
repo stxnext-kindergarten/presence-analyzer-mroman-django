@@ -12,6 +12,7 @@ from stx_presence_analyzer.analyzer.models import User, PresenceWeekday
 
 
 class Command(BaseCommand):
+    """ Class for command """
     option_list = BaseCommand.option_list + (
         make_option('--users_to_db',
                     action='store_true',
@@ -46,7 +47,9 @@ class Command(BaseCommand):
         },
         """
         data = {}
-        with io.open('runtime/data/sample_data.csv', 'r', encoding='utf-8') as csvfile:
+        with io.open('runtime/data/sample_data.csv',
+                     'r',
+                     encoding='utf-8') as csvfile:
             presence_reader = csv.reader(csvfile, delimiter=',')
             for i, row in enumerate(presence_reader):
                 if len(row) != 4:
@@ -54,13 +57,18 @@ class Command(BaseCommand):
                     continue
                 try:
                     user_id = int(row[0])
-                    date = datetime.datetime.strptime(row[1], '%Y-%m-%d').date()
-                    start = datetime.datetime.strptime(row[2], '%H:%M:%S').time()
-                    end = datetime.datetime.strptime(row[3], '%H:%M:%S').time()
+                    date = datetime.datetime.strptime(row[1],
+                                                      '%Y-%m-%d').date()
+                    start = datetime.datetime.strptime(row[2],
+                                                       '%H:%M:%S').time()
+                    end = datetime.datetime.strptime(row[3],
+                                                     '%H:%M:%S').time()
                 except (ValueError, TypeError):
                     log.debug('Problem with line %d: ', i, exc_info=True)
 
-                data.setdefault(user_id, {})[date] = {'start': start, 'end': end}
+                data.setdefault(user_id, {})[date] = {
+                    'start': start, 'end': end
+                }
         return data
 
     def _get_data_from_xml(self):
@@ -100,7 +108,8 @@ class Command(BaseCommand):
             get_data2 = self._get_data()
             mapped_ids = dict(
                 User.objects.filter(
-                    legacy_id__in=get_data2.keys()).values_list('legacy_id', 'id'))
+                    legacy_id__in=get_data2.keys()).values_list('legacy_id',
+                                                                'id'))
             for legacy_id, data in get_data2.iteritems():
                 user_id = mapped_ids.get(legacy_id)
                 if user_id:
@@ -115,5 +124,5 @@ class Command(BaseCommand):
                             )
                     print "User %s done" % legacy_id
                 else:
-                    print "User %s has not been done. No data for user" % legacy_id
+                    print "User %s .No data for user" % legacy_id
             print "Data done!"

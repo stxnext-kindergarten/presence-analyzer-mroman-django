@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 def group_by_weekday(items):
     """
     Groups presence entries by weekday.

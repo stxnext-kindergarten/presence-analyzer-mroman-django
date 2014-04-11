@@ -37,12 +37,10 @@ class PresenceViewsTestCase(TestCase):
         """
         resp = self.client.get('/api/v4/users/')
         check1 = User.objects.get(pk=2)
-        check2 = User.objects.get(pk=20)
 
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp['Content-Type'], 'application/json')
         self.assertEqual(check1.legacy_id, 150)
-        self.assertEqual(check2.avatar, "https://intranet.stxnext.pl/api/images/users/176")
 
     def test_presence_data_request(self):
         """
@@ -106,6 +104,7 @@ class PresenceViewsTestCase(TestCase):
         data = json.loads(resp.content)
         empty_dict = {}
         self.assertEqual(data, empty_dict)
+
 
 class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
     """
