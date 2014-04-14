@@ -60,7 +60,7 @@ class JSONResponseMixin(object):
         data = PresenceWeekday.objects.filter(user__legacy_id=user_id_ok)
         if not data:
             logger.debug('User %s not found!', user_id_ok)
-            return []
+            return {}
 
         data_presence_dict = {
             presence.day:

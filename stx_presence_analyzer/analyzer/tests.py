@@ -92,8 +92,7 @@ class PresenceViewsTestCase(TestCase):
         """
         resp = self.client.get('/api/v2/1929')
         data = json.loads(resp.content)
-        empty_dict = {}
-        self.assertEqual(data, empty_dict)
+        self.assertEqual(data, {})
 
     def test_st_end_view_emp_lst(self):
         """
@@ -101,15 +100,13 @@ class PresenceViewsTestCase(TestCase):
         """
         resp = self.client.get('/api/v3/1929')
         data = json.loads(resp.content)
-        empty_dict = {}
-        self.assertEqual(data, empty_dict)
+        self.assertEqual(data, {})
 
 
 class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
     """
     Utility functions tests.
     """
-    fixtures = ['stx_presence_analyzer/analyzer/fixtures.json']
 
     def setUp(self):
         """ Before each test, set up an environment. """
@@ -120,7 +117,6 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         """
         Test group_by_weekday function
         """
-        empty_items = []
         items = {
             datetime.date(2013, 9, 11): {
                 'end': datetime.time(16, 15, 27),
@@ -131,7 +127,7 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
                 'start': datetime.time(10, 18, 36)
             }}
         result_1 = utils.group_by_weekday(items)
-        result_2 = utils.group_by_weekday(empty_items)
+        result_2 = utils.group_by_weekday([])
 
         expected_result_1 = {
             0: [],
@@ -182,8 +178,7 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         Test mean function
         """
         strange_lst = [3, 4, 5, 6, 7, 8]
-        empty_lst = []
-        self.assertEqual(0, utils.mean(empty_lst))
+        self.assertEqual(0, utils.mean([]))
         self.assertEqual(utils.mean(strange_lst), 5.5)
 
 if __name__ == '__main__':

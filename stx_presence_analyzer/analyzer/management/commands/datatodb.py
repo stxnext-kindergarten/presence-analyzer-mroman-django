@@ -18,7 +18,7 @@ class Command(BaseCommand):
                     action='store_true',
                     help='File users and data to db'),)
 
-    def _get_data(self):
+    def get_presence(self):
         """
         Extracts presence data from CSV file and groups it by user_id.
 
@@ -71,7 +71,7 @@ class Command(BaseCommand):
                 }
         return data
 
-    def _get_data_from_xml(self):
+    def get_users(self):
         """
         Parser get data from users.xml file
         Structure:
@@ -96,8 +96,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if options['users_to_db']:
-            get_data_users = self._get_data_from_xml()
-            for user_id, data in get_data_users.iteritems():
+            data_users = self.get_users()
+            for user_id, data in data_users.iteritems():
                 User.objects.get_or_create(
                     first_name=data['name'],
                     avatar=data['avatar'],
@@ -105,12 +105,12 @@ class Command(BaseCommand):
                     )
             print "Users list done!"
 
-            get_data_presence = self._get_data()
+            data_presence = self.get_presence()
             mapped_ids = dict(
                 User.objects.filter(
-                    legacy_id__in=get_data_presence.keys()).values_list(
+                    legacy_id__in=data_presence.keys()).values_list(
                         'legacy_id', 'id'))
-            for legacy_id, data in get_data_presence.iteritems():
+            for legacy_id, data in data_presence.iteritems():
                 user_id = mapped_ids.get(legacy_id)
                 if user_id:
                     for day, hours in data.iteritems():
