@@ -1,15 +1,15 @@
 from django.db import models
 
-# Create your models here.
-
 
 class User(models.Model):
+    """ User model """
     first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
     avatar = models.CharField(max_length=600)
+    legacy_id = models.IntegerField(max_length=50)
 
 
 class PresenceWeekday(models.Model):
+    """ PresenceWeekday model """
     user = models.ForeignKey(
         'analyzer.User', verbose_name='User')
     day = models.DateField('Data')

@@ -1,11 +1,15 @@
-import time
+# -*- coding: utf-8 -*-
+import calendar
+import logging
+import json
 
-from datetime import datetime
-
-from django.utils import simplejson as json
-from django.shortcuts import render
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse
 from django.views.generic.base import TemplateView
+
+from stx_presence_analyzer.analyzer.models import User, PresenceWeekday
+from stx_presence_analyzer.analyzer import utils
+
+logger = logging.getLogger(__name__)
 
 
 class MainPage(TemplateView):
@@ -50,6 +54,23 @@ class JSONResponseMixin(object):
         """Convert the context dictionary into a JSON object"""
         return json.dumps(context)
 
+    def _get_data(self):
+        """ Get data from model PresenceWeekday and return it"""
+        user_id_ok = self.kwargs['user_id']
+        data = PresenceWeekday.objects.filter(user__legacy_id=user_id_ok)
+        if not data:
+            logger.debug('User %s not found!', user_id_ok)
+            return {}
+
+        data_presence_dict = {
+            presence.day:
+                {
+                    'start': presence.start,
+                    'end': presence.end
+                } for presence in data}
+
+        return data_presence_dict
+
 
 class Presence(JSONResponseMixin, TemplateView):
     """
@@ -57,30 +78,19 @@ class Presence(JSONResponseMixin, TemplateView):
     """
     def get_context_data(self, **kwargs):
         """Get context data method"""
-        presences = {
-            141: [
-                ('Weekday', 'Presence (s)'),
-                ('Mon', 383605),
-                ('Tue', 370891),
-                ('Wed', 356433),
-                ('Thu', 356662),
-                ('Fri', 319762),
-                ('Sat', 45037),
-                ('Sun', 0)
-                ],
-            176: [
-                ('Weekday', 'Presence (s)'),
-                ('Mon', 0),
-                ('Tue', 36331),
-                ('Wed', 30575),
-                ('Thu', 29815),
-                ('Fri', 1),
-                ('Sat', 0),
-                ('Sun', 0)
-                ],
-            }
-        user_id = int(kwargs['user_id'])
-        return presences[user_id]
+        data_dict = self._get_data()
+        if not data_dict:
+            return {}
+        weekdays = utils.group_by_weekday(data_dict)
+
+        presences = [
+            (
+                calendar.day_abbr[weekday], sum(intervals)
+            )
+            for weekday, intervals in weekdays.items()
+        ]
+        presences.insert(0, ('Weekday', 'Presence (s)'))
+        return presences
 
 
 class PresenceStartEnd(JSONResponseMixin, TemplateView):
@@ -89,28 +99,18 @@ class PresenceStartEnd(JSONResponseMixin, TemplateView):
     """
     def get_context_data(self, **kwargs):
         """Get context data method"""
-        presences = {
-            141: [
-                ("Mon", 30441.615384615383, 59949.692307692305),
-                ("Tue", 28239.30769230769, 56769.38461538462),
-                ("Wed", 29774.75, 59477.5),
-                ("Thu", 28521.083333333332, 58242.916666666664),
-                ("Fri", 28690.727272727272, 57760.0),
-                ("Sat", 28251.0, 73288.0),
-                ("Sun", 0, 0)
-                ],
-            176: [
-                ("Mon", 0, 0),
-                ("Tue", 32632.0, 50797.5),
-                ("Wed", 29643.0, 60218.0),
-                ("Thu", 32009.0, 46916.5),
-                ("Fri", 32319.0, 32320.0),
-                ("Sat", 0, 0),
-                ("Sun", 0, 0)
-                ],
-            }
-        user_id = int(kwargs['user_id'])
-        return presences[user_id]
+        data_dict = self._get_data()
+        if not data_dict:
+            return {}
+        weekdays = utils.group_times_by_weekday(data_dict)
+        return [
+            (
+                calendar.day_abbr[weekday],
+                utils.mean(times['start']),
+                utils.mean(times['end']),
+            )
+            for weekday, times in weekdays.items()
+        ]
 
 
 class Users(JSONResponseMixin, TemplateView):
@@ -119,11 +119,12 @@ class Users(JSONResponseMixin, TemplateView):
     """
     def get_context_data(self, **kwargs):
         """Get context data method"""
+        users = User.objects.all()
         return [
-            {'avatar': 'https://intranet.stxnext.pl/api/images/users/141',
-                'name': 'Adam P.',
-                'user_id': '141'},
-            {'avatar': 'https://intranet.stxnext.pl/api/images/users/176',
-                'name': 'Adrian K.',
-                'user_id': '176'},
-            ]
+            {
+                'avatar': user.avatar,
+                'name': user.first_name,
+                'user_id': user.legacy_id
+            }
+            for user in users
+        ]

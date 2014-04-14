@@ -22,7 +22,7 @@
                 loading.show();
                 chart_div.hide();
                 $.getJSON("/api/v2/"+user, function(result) {
-                    if(result.length !== 0) {
+                    if (result.length !== undefined) {
                         var data = google.visualization.arrayToDataTable(result);
                         var options = {};
                         chart_div.show();
@@ -34,7 +34,7 @@
                         chart_div.show();
                         $('#chart_div').text('Brak danych dla tego użytkownika');
                         loading.hide();
-                    }            
+                    }
                 });
             }
         });

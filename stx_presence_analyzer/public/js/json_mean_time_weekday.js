@@ -28,7 +28,7 @@ function parseInterval(value) {
                 loading.show();
                 chart_div.hide();
                 $.getJSON("/api/v2/"+user, function(result) {
-                    if(result.length !==0) {
+                    if (result.length !== undefined) {
                         $.each(result, function(index, value) {
                         value[1] = parseInterval(value[1]);
                         });
@@ -45,7 +45,7 @@ function parseInterval(value) {
                         chart_div.show();
                         loading.hide();
                         var chart = new google.visualization.ColumnChart(chart_div[0]);
-                        chart.draw(data, options);  
+                        chart.draw(data, options);
                     }
                     else{
                         chart_div.show();
